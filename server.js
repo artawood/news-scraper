@@ -26,38 +26,41 @@ app.engine("handlebars", expHandleBars({
 app.set("view engine", "handlebars");
 
 // Routes
-
+//GET Route for scraping WSJ Technology Site
 app.get("/scrape", (req, res) => {
+    const results = [];
+    
     request('https://www.wsj.com/news/technology', (error, response, body) => {
     // console.log('error: ', error);
     // console.log('statusCode: ', response);
         const $ = cheerio.load(body);
-        
-        let result = {};
-
+        const headlines = [];
+        const summaries = [];
         // Scrap WSJ headlines
         $('.wsj-headline').each((i, element) => {
             const headline = $(element).text();
-            console.log(headline);
-            result.headline = headline;
+            // console.log(headline);
+            headlines.push(headline);
         });
+        
         //Scrap WSJ Summaries
         $('.wsj-summary').each((i, element) => {
             const summary = $(element).text();
-            console.log(summary);
-            result.summary = summary;
+            // console.log(summary);
+            summaries.push(summary);
         })
 
-        db.article.create(result)
-            .then((dbArticle) => {
-                console.log(dbArticle);
-            })
-            .catch((err) => {
-                return res.json(err);
-            })
+        // db.article.create(result)
+        //     .then((dbArticle) => {
+        //         console.log(dbArticle);
+        //     })
+        //     .catch((err) => {
+        //         return res.json(err);
+        //     })
 
     });
-    res.send("Article successfully scraped");
+    console.log(results);
+    res.send("Article successfully scraped. Here's are the headline found: \n");
 })
 
 const port = process.env.PORT || 3000;

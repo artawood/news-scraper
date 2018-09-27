@@ -10,7 +10,9 @@ const request = require('request');
 
 // Establish connection to mongo DB
 const mongoose = require('mongoose');
-mongoose.connect('mongodb:') //create mongodb on mlab
+//connects to mlab 15193
+mongoose.connect('mongodb://news-scraper-hw:NewsYouCantMiss2@ds15193.mlab.com:15193/news-scraper');
+const db = require('./models');
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -24,31 +26,39 @@ app.engine("handlebars", expHandleBars({
 app.set("view engine", "handlebars");
 
 // Routes
-// require("./routes/apiRoutes")(app);
 
-request('https://www.wsj.com/news/technology', (error, response, body) => {
+app.get("/scrape", (req, res) => {
+    request('https://www.wsj.com/news/technology', (error, response, body) => {
     // console.log('error: ', error);
     // console.log('statusCode: ', response);
-    const $ = cheerio.load(body);
+        const $ = cheerio.load(body);
+        
+        let result = {};
 
-    const result = {
-        headline:[],
-        summary:[],
-    }
-    
-    // Scrap WSJ headlines
-    $('.wsj-headline').each((i, element) => {
-        const headline = $(element).text();
-        result.headline.push(headline[0]);
+        // Scrap WSJ headlines
+        $('.wsj-headline').each((i, element) => {
+            const headline = $(element).text();
+            console.log(headline);
+            result.headline = headline;
+        });
+        //Scrap WSJ Summaries
+        $('.wsj-summary').each((i, element) => {
+            const summary = $(element).text();
+            console.log(summary);
+            result.summary = summary;
+        })
+
+        db.article.create(result)
+            .then((dbArticle) => {
+                console.log(dbArticle);
+            })
+            .catch((err) => {
+                return res.json(err);
+            })
+
     });
-    //Scrap WSJ Summaries
-    $('.wsj-summary').each((i, element) => {
-        const summary = $(element).text();
-        result.summary.push(summary[0]);
-    })
-
-    console.log(result.headline + '\n' + result.summary);
-});
+    res.send("Article successfully scraped");
+})
 
 const port = process.env.PORT || 3000;
 //listening app.js on port 3000

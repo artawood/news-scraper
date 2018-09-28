@@ -26,6 +26,11 @@ app.engine("handlebars", expHandleBars({
 app.set("view engine", "handlebars");
 
 // Routes
+
+app.get("/", (req, res) => {
+    res.render("index");
+});
+
 //GET Route for scraping WSJ Technology Site
 app.get("/scrape", (req, res) => {
     const results = [];

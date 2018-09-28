@@ -7,8 +7,9 @@ This is a web app that lets users view and leave comments on the latest news. Fo
 - Created views for the app
 - Created a get route to retrieve article headlines and summary from the WSJ Technology site
 - Created a connection to Mongo DB via mLab
+- rendered scraped results onto the DOM
 
 ## TODO
-- render scraped results onto the DOM
+- make it pretty!!
 - add feature that allows users to select articles to comment
 - store comments in Mongo DB

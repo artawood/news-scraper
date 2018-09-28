@@ -33,7 +33,6 @@ app.get("/", (req, res) => {
 
 //GET Route for scraping WSJ Technology Site
 app.get("/scrape", (req, res) => {
-    const results = [];
     
     request('https://www.wsj.com/news/technology', (error, response, body) => {
     // console.log('error: ', error);
@@ -55,17 +54,13 @@ app.get("/scrape", (req, res) => {
             summaries.push(summary);
         })
 
-        // db.article.create(result)
-        //     .then((dbArticle) => {
-        //         console.log(dbArticle);
-        //     })
-        //     .catch((err) => {
-        //         return res.json(err);
-        //     })
-
+        res.render("scrape", {
+            headlines: headlines,
+            summaries: summaries
+        })
+        
     });
-    console.log(results);
-    res.send("Article successfully scraped. Here's are the headline found: \n");
+    
 })
 
 const port = process.env.PORT || 3000;
